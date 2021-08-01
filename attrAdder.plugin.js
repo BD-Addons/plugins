@@ -2,32 +2,10 @@
  * @name attrAdder
  * @author unknown81311#6969
  * @description Adds attrs to elements, can be used for more features in themes.
- * @version 1
+ * @version 1.1
  * @invite https://discord.gg/yYJA3qQE5F
  * @authorId 359174224809689089
  */
-/*@cc_on
-@if (@_jscript)
-    
-    // Offer to self-install for clueless users that try to run this directly.
-    var shell = WScript.CreateObject("WScript.Shell");
-    var fs = new ActiveXObject("Scripting.FileSystemObject");
-    var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-    var pathSelf = WScript.ScriptFullName;
-    // Put the user at ease by addressing them in the first person
-    shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-    if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-        shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-    } else if (!fs.FolderExists(pathPlugins)) {
-        shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-    } else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-        fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-        // Show the user where to put plugins in the future
-        shell.Exec("explorer " + pathPlugins);
-        shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-    }
-    WScript.Quit();
-@else@*/
 
 module.exports = class attrAdder {
     load() {
@@ -47,16 +25,17 @@ module.exports = class attrAdder {
         }
     } 
     stop() {
-        this.watcher.close()
+        this.watcher.close();
         if(document.body.hasAttribute('plugins')) document.body.removeAttribute('plugins');
     }
     observer (mutations) {
+        if(document.querySelector('.threadSidebar-1o3BTy') && !document.querySelector('.threadSidebar-1o3BTy[id]')){
+            document.querySelector('.threadSidebar-1o3BTy').setAttribute('id',BdApi.findModuleByProps('getThreadSidebarState').getThreadSidebarState(BdApi.findModuleByProps('getChannelId').getChannelId())?.channelId);
+        }
         if(!document.querySelector('main.chatContent-a9vAAp[guild]')){
             try{let ids = window.location.pathname.match(/\d+/g).reduce((obj, el, index) => { obj[index === 0 ? 'guild' : 'channel'] = el; return obj; }, {})
             for (let key in ids){document.querySelector('main').setAttribute(key, ids[key])}}catch{}
         }
-        if(document.querySelector('.threadSidebar-1o3BTy') && !document.querySelector('.threadSidebar-1o3BTy[id]')){
-            document.querySelector('.threadSidebar-1o3BTy').setAttribute('id',BdApi.findModuleByProps('getThreadSidebarState').getThreadSidebarState(BdApi.findModuleByProps('getChannelId').getChannelId())?.channelId);
-        }
     }
+    
 }
